@@ -5,15 +5,13 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Reflection;
-using System.Text;
 using CodeOwls.PowerShell.Paths.Processors;
 using CodeOwls.PowerShell.Provider;
-using CodeOwls.PowerShell.Provider.PathNodeProcessors;
 using CodeOwls.PowerShell.Provider.PathNodes;
 
 namespace ProviderFramework_2_TypeProvider
 {
-    [CmdletProvider("Types", ProviderCapabilities.ShouldProcess )]
+    [CmdletProvider("Types", ProviderCapabilities.ShouldProcess)]
     public class TypeProvider : Provider
     {
         protected override IPathResolver PathResolver
@@ -23,8 +21,8 @@ namespace ProviderFramework_2_TypeProvider
 
         protected override System.Collections.ObjectModel.Collection<PSDriveInfo> InitializeDefaultDrives()
         {
-            var driveInfo = new PSDriveInfo( "Types", ProviderInfo, String.Empty, "Provider for loaded .NET assemblies and types", null );
-            return new Collection<PSDriveInfo>{ new TypeDrive( driveInfo )};
+            var driveInfo = new PSDriveInfo("Types", ProviderInfo, string.Empty, "Provider for loaded .NET assemblies and types", null);
+            return new Collection<PSDriveInfo> { new TypeDrive(driveInfo) };
         }
     }
 
@@ -35,7 +33,7 @@ namespace ProviderFramework_2_TypeProvider
         }
     }
 
-    class PathResolver : PathResolverBase
+    internal class PathResolver : PathResolverBase
     {
         protected override IPathNode Root
         {
@@ -43,11 +41,11 @@ namespace ProviderFramework_2_TypeProvider
         }
     }
 
-    class AppDomainPathNode : PathNodeBase
+    internal class AppDomainPathNode : PathNodeBase
     {
         public override IPathValue GetNodeValue()
         {
-            return new ContainerPathValue( AppDomain.CurrentDomain, Name );
+            return new ContainerPathValue(AppDomain.CurrentDomain, Name);
         }
 
         public override string Name
@@ -62,18 +60,18 @@ namespace ProviderFramework_2_TypeProvider
         }
     }
 
-    class AssemblyPathNode : PathNodeBase
+    internal class AssemblyPathNode : PathNodeBase
     {
         private readonly Assembly _assembly;
 
-        public AssemblyPathNode( Assembly assembly )
+        public AssemblyPathNode(Assembly assembly)
         {
             _assembly = assembly;
         }
 
         public override IPathValue GetNodeValue()
         {
-            return new ContainerPathValue( _assembly, Name );
+            return new ContainerPathValue(_assembly, Name);
         }
 
         public override string Name
@@ -88,18 +86,18 @@ namespace ProviderFramework_2_TypeProvider
         }
     }
 
-    class TypePathNode : PathNodeBase
+    internal class TypePathNode : PathNodeBase
     {
         private readonly Type _type;
 
-        public TypePathNode( Type type )
+        public TypePathNode(Type type)
         {
             _type = type;
         }
 
         public override IPathValue GetNodeValue()
         {
-            return new LeafPathValue( _type, Name );
+            return new LeafPathValue(_type, Name);
         }
 
         public override string Name

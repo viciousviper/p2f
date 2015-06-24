@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Text;
 
 namespace ProviderFramework_1_TheNullProvider
 {
@@ -16,7 +13,7 @@ namespace ProviderFramework_1_TheNullProvider
     {
         /// <summary>
         /// a required P2F override
-        /// 
+        ///
         /// supplies P2F with the path processor for this provider
         /// </summary>
         protected override CodeOwls.PowerShell.Paths.Processors.IPathResolver PathResolver
@@ -31,8 +28,8 @@ namespace ProviderFramework_1_TheNullProvider
         {
             return new Collection<PSDriveInfo>
                        {
-                           new NullDrive( 
-                               new PSDriveInfo( "Null", ProviderInfo, String.Empty, "Null Drive", null ) 
+                           new NullDrive(
+                               new PSDriveInfo( "Null", ProviderInfo, string.Empty, "Null Drive", null )
                            )
                        };
         }

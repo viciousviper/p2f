@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
@@ -9,12 +8,13 @@ using CodeOwls.PowerShell.Provider.PathNodes;
 
 namespace ProviderFramework_3_TypeProvider
 {
-    class AppDomainPathNode : PathNodeBase, INewItem
+    internal class AppDomainPathNode : PathNodeBase, INewItem
     {
         #region unchanged code from previous version
+
         public override IPathValue GetNodeValue()
         {
-            return new ContainerPathValue( AppDomain.CurrentDomain, Name );
+            return new ContainerPathValue(AppDomain.CurrentDomain, Name);
         }
 
         public override string Name
@@ -27,14 +27,15 @@ namespace ProviderFramework_3_TypeProvider
             return from assembly in AppDomain.CurrentDomain.GetAssemblies()
                    select new AssemblyPathNode(assembly) as IPathNode;
         }
-        #endregion
+
+        #endregion unchanged code from previous version
 
         /// <summary>
         /// returns a list of valid type names for new items
-        /// 
+        ///
         /// if provided the P2F uses this list to validate the value supplied
         /// to the new-item -itemType parameter
-        /// 
+        ///
         /// because this provider does not support item types, this
         /// implementation simply returns null
         /// </summary>
@@ -45,7 +46,7 @@ namespace ProviderFramework_3_TypeProvider
 
         /// <summary>
         /// returns an object defining custom parameters for the new-item cmdlet.
-        /// 
+        ///
         /// because this provider does not support custom parameters, this
         /// implementation simply returns null
         /// </summary>
@@ -56,11 +57,11 @@ namespace ProviderFramework_3_TypeProvider
 
         /// <summary>
         /// processes the new-item cmdlet for paths that resolve to the appdomain value factory
-        /// 
+        ///
         /// adds an assembly to the current appdomain.  assemblies can be specified using
         /// their (partial) names or a file path.
-        /// 
-        /// this implementation essentially delegates all work to to the add-type built-in 
+        ///
+        /// this implementation essentially delegates all work to to the add-type built-in
         /// powershell cmdlet to load an assembly from a partial name or file path.
         /// </summary>
         /// <param name="providerContext">the cmdlet providerContext providing powershell and framework services</param>
@@ -70,14 +71,14 @@ namespace ProviderFramework_3_TypeProvider
         /// <returns></returns>
         public IPathValue NewItem(IProviderContext providerContext, string path, string itemTypeName, object newItemValue)
         {
-            IEnumerable<PSObject> results = new PSObject[]{};
+            IEnumerable<PSObject> results = new PSObject[] { };
 
             // first try to load the new assembly from an assembly name
             //  note that the invoked script will return a single assembly object if successful
             try
             {
                 results = providerContext.InvokeCommand.InvokeScript(
-                    String.Format("add-type -assemblyname '{0}' -passthru | select -first 1 -exp Assembly", path),
+                    string.Format("add-type -assemblyname '{0}' -passthru | select -first 1 -exp Assembly", path),
                     null);
             }
             catch
@@ -86,12 +87,12 @@ namespace ProviderFramework_3_TypeProvider
 
             // ... if that fails, try and load the assembly from a file path
             //  note that the invoked script will return a single assembly object if successful
-            if( ! results.Any() )
+            if (!results.Any())
             {
                 try
                 {
                     results = providerContext.InvokeCommand.InvokeScript(
-                        String.Format("add-type -path '{0}' -passthru | select -first 1 -exp Assembly", path),
+                        string.Format("add-type -path '{0}' -passthru | select -first 1 -exp Assembly", path),
                         null);
                 }
                 catch
@@ -100,15 +101,15 @@ namespace ProviderFramework_3_TypeProvider
             }
 
             // raise any errors
-            if( ! results.Any() )
+            if (!results.Any())
             {
-                throw new ArgumentException( "the specified name is not recognized as a valid assembly name or path");
+                throw new ArgumentException("the specified name is not recognized as a valid assembly name or path");
             }
 
             // return the path value value to write to the pipeline
             var assembly = results.First().BaseObject as Assembly;
 
-            // to maintain consistency I find it easier to leverage the value factory classes rather than return 
+            // to maintain consistency I find it easier to leverage the value factory classes rather than return
             //  an IPathValue instance directly.
             var nodeFactory = new AssemblyPathNode(assembly);
             return nodeFactory.GetNodeValue();

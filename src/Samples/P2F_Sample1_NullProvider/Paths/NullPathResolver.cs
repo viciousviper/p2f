@@ -6,7 +6,7 @@ namespace ProviderFramework_1_TheNullProvider
     /// <summary>
     /// the path node processor
     /// </summary>
-    class NullPathResolver : PathResolverBase
+    internal class NullPathResolver : PathResolverBase
     {
         /// <summary>
         /// returns the first node factory object in the path graph
@@ -15,7 +15,7 @@ namespace ProviderFramework_1_TheNullProvider
         {
             get
             {
-                return new NullRootPathNode();            
+                return new NullRootPathNode();
             }
         }
     }

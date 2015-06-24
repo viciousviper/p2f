@@ -11,7 +11,7 @@ using CodeOwls.PowerShell.Provider.PathNodes;
 
 namespace ProviderFramework_3_TypeProvider
 {
-    [CmdletProvider("Types", ProviderCapabilities.ShouldProcess )]
+    [CmdletProvider("Types", ProviderCapabilities.ShouldProcess)]
     public class TypeProvider : Provider
     {
         protected override IPathResolver PathResolver
@@ -21,8 +21,8 @@ namespace ProviderFramework_3_TypeProvider
 
         protected override System.Collections.ObjectModel.Collection<PSDriveInfo> InitializeDefaultDrives()
         {
-            var driveInfo = new PSDriveInfo( "Types", ProviderInfo, String.Empty, "Provider for loaded .NET assemblies and types", null );
-            return new Collection<PSDriveInfo>{ new TypeDrive( driveInfo )};
+            var driveInfo = new PSDriveInfo("Types", ProviderInfo, string.Empty, "Provider for loaded .NET assemblies and types", null);
+            return new Collection<PSDriveInfo> { new TypeDrive(driveInfo) };
         }
     }
 
@@ -33,7 +33,7 @@ namespace ProviderFramework_3_TypeProvider
         }
     }
 
-    class PathResolver : PathResolverBase
+    internal class PathResolver : PathResolverBase
     {
         protected override IPathNode Root
         {
@@ -41,18 +41,18 @@ namespace ProviderFramework_3_TypeProvider
         }
     }
 
-    class AssemblyPathNode : PathNodeBase
+    internal class AssemblyPathNode : PathNodeBase
     {
         private readonly Assembly _assembly;
 
-        public AssemblyPathNode( Assembly assembly )
+        public AssemblyPathNode(Assembly assembly)
         {
             _assembly = assembly;
         }
 
         public override IPathValue GetNodeValue()
         {
-            return new ContainerPathValue( _assembly, Name );
+            return new ContainerPathValue(_assembly, Name);
         }
 
         public override string Name

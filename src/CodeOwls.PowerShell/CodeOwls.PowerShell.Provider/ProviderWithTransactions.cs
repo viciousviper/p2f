@@ -1,30 +1,31 @@
 ﻿/*
 	Copyright (c) 2014 Code Owls LLC
 
-	Permission is hereby granted, free of charge, to any person obtaining a copy 
-	of this software and associated documentation files (the "Software"), to 
-	deal in the Software without restriction, including without limitation the 
-	rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the Software is 
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to
+	deal in the Software without restriction, including without limitation the
+	rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the Software is
 	furnished to do so, subject to the following conditions:
 
-	The above copyright notice and this permission notice shall be included in 
+	The above copyright notice and this permission notice shall be included in
 	all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
-	IN THE SOFTWARE. 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+	IN THE SOFTWARE.
 */
 
+using Sytem;
 using System.Management.Automation;
 
 namespace CodeOwls.PowerShell.Provider
 {
-    public abstract class ProviderWithTransactions : ProviderWithDisposableSession 
+    public abstract class ProviderWithTransactions : ProviderWithDisposableSession
     {
         protected override object GetItemDynamicParameters(string path)
         {
@@ -35,7 +36,7 @@ namespace CodeOwls.PowerShell.Provider
                     return base.GetItemDynamicParameters(path);
                 }
             }
-            return base.GetItemDynamicParameters(path); 
+            return base.GetItemDynamicParameters(path);
         }
 
         protected override object ItemExistsDynamicParameters(string path)
@@ -58,7 +59,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.IsItemContainer(path);
                 }
-            } 
+            }
             return base.IsItemContainer(path);
         }
 
@@ -70,7 +71,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.MoveItemDynamicParameters(path, destination);
                 }
-            } 
+            }
             return base.MoveItemDynamicParameters(path, destination);
         }
 
@@ -83,7 +84,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.MoveItem(path, destination);
                     return;
                 }
-            } 
+            }
             base.MoveItem(path, destination);
         }
 
@@ -96,7 +97,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.GetItem(path);
                     return;
                 }
-            } 
+            }
             base.GetItem(path);
         }
 
@@ -109,7 +110,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.SetItem(path, value);
                     return;
                 }
-            } 
+            }
             base.SetItem(path, value);
         }
 
@@ -121,7 +122,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.SetItemDynamicParameters(path, value);
                 }
-            } 
+            }
             return base.SetItemDynamicParameters(path, value);
         }
 
@@ -133,7 +134,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.ClearItemDynamicParameters(path);
                 }
-            } 
+            }
             return base.ClearItemDynamicParameters(path);
         }
 
@@ -158,7 +159,8 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.ItemExistsDynamicParameters(path);
                 }
-            } return base.InvokeDefaultActionDynamicParameters(path);
+            }
+            return base.InvokeDefaultActionDynamicParameters(path);
         }
 
         protected override void InvokeDefaultAction(string path)
@@ -170,7 +172,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.InvokeDefaultAction(path);
                     return;
                 }
-            } 
+            }
             base.InvokeDefaultAction(path);
         }
 
@@ -182,7 +184,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.ItemExists(path);
                 }
-            } 
+            }
             return base.ItemExists(path);
         }
 
@@ -194,7 +196,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.IsValidPath(path);
                 }
-            } 
+            }
             return base.IsValidPath(path);
         }
 
@@ -207,7 +209,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.GetChildItems(path, recurse);
                     return;
                 }
-            } 
+            }
             base.GetChildItems(path, recurse);
         }
 
@@ -219,7 +221,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.GetChildItemsDynamicParameters(path, recurse);
                 }
-            } 
+            }
             return base.GetChildItemsDynamicParameters(path, recurse);
         }
 
@@ -232,7 +234,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.GetChildNames(path, returnContainers);
                     return;
                 }
-            } 
+            }
             base.GetChildNames(path, returnContainers);
         }
 
@@ -244,7 +246,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.GetChildNamesDynamicParameters(path);
                 }
-            } 
+            }
             return base.GetChildNamesDynamicParameters(path);
         }
 
@@ -257,7 +259,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.RenameItem(path, newName);
                     return;
                 }
-            } 
+            }
             base.RenameItem(path, newName);
         }
 
@@ -269,7 +271,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.RenameItemDynamicParameters(path, newName);
                 }
-            } 
+            }
             return base.RenameItemDynamicParameters(path, newName);
         }
 
@@ -282,7 +284,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.NewItem(path, itemTypeName, newItemValue);
                     return;
                 }
-            } 
+            }
             base.NewItem(path, itemTypeName, newItemValue);
         }
 
@@ -294,7 +296,8 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.ItemExistsDynamicParameters(path);
                 }
-            } return base.NewItemDynamicParameters(path, itemTypeName, newItemValue);
+            }
+            return base.NewItemDynamicParameters(path, itemTypeName, newItemValue);
         }
 
         protected override void RemoveItem(string path, bool recurse)
@@ -306,7 +309,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.RemoveItem(path, recurse);
                     return;
                 }
-            } 
+            }
             base.RemoveItem(path, recurse);
         }
 
@@ -318,7 +321,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.RemoveItemDynamicParameters(path, recurse);
                 }
-            } 
+            }
             return base.RemoveItemDynamicParameters(path, recurse);
         }
 
@@ -330,7 +333,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.HasChildItems(path);
                 }
-            } 
+            }
             return base.HasChildItems(path);
         }
 
@@ -343,7 +346,7 @@ namespace CodeOwls.PowerShell.Provider
                     base.CopyItem(path, copyPath, recurse);
                     return;
                 }
-            } 
+            }
             base.CopyItem(path, copyPath, recurse);
         }
 
@@ -355,7 +358,7 @@ namespace CodeOwls.PowerShell.Provider
                 {
                     return base.CopyItemDynamicParameters(path, destination, recurse);
                 }
-            } 
+            }
             return base.CopyItemDynamicParameters(path, destination, recurse);
         }
     }
