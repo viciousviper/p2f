@@ -20,9 +20,6 @@
 	IN THE SOFTWARE. 
 */
 
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,8 +41,6 @@ using CodeOwls.PowerShell.Provider.PathNodes;
 
 namespace CodeOwls.PowerShell.Provider
 {
-    //[CmdletProvider("YourProviderName", ProviderCapabilities.ShouldProcess)]
-    
     public abstract class Provider : NavigationCmdletProvider, 
         IPropertyCmdletProvider, 
         ICmdletProviderSupportsHelp,
@@ -53,20 +48,9 @@ namespace CodeOwls.PowerShell.Provider
     {
         internal Drive DefaultDrive
         {
-            get
-            {
-                var drive = PSDriveInfo as Drive;
-
-                if (null == drive)
-                {
-                    drive = ProviderInfo.Drives.FirstOrDefault() as Drive;
-                }
-
-                return drive;
-            }
+            get { return PSDriveInfo as Drive ?? ProviderInfo.Drives.FirstOrDefault() as Drive; }
         }
 
- 
         internal Drive GetDriveForPath( string path )
         {
             var name = Drive.GetDriveName(path);
@@ -224,7 +208,6 @@ namespace CodeOwls.PowerShell.Provider
         }
 
         #endregion
-
 
         #region Implementation of ICmdletProviderSupportsHelp
 
@@ -553,7 +536,7 @@ namespace CodeOwls.PowerShell.Provider
         void SetItem( string path, IPathNode factory, object value )
         {
             var @set = factory as ISetItem;
-            if (null == factory || null == @set)
+            if (null == @set)
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.SetItem, SetItemNotSupportedErrorID);
                 return;
@@ -592,6 +575,14 @@ namespace CodeOwls.PowerShell.Provider
             var factories = GetNodeFactoryFromPath(path);
             if (null == factories)
             {
+                WriteError(
+                    new ErrorRecord(
+                        new ItemNotFoundException(path),
+                        SetItemTargetDoesNotExistErrorID,
+                        ErrorCategory.ObjectNotFound,
+                        path
+                        )
+                    );
                 return;
             }
 
@@ -606,9 +597,8 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoSetItemDynamicParameters(string path)
         {
-            var factory = GetFirstNodeFactoryFromPath(path);
-            var @set = factory as ISetItem;
-            if (null == factory || null == @set)
+            var @set = GetFirstNodeFactoryFromPath(path) as ISetItem;
+            if (null == @set)
             {
                 return null;
             }
@@ -624,9 +614,8 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoClearItemDynamicParameters(string path)
         {
-            var factory = GetFirstNodeFactoryFromPath(path);
-            var clear = factory as IClearItem;
-            if (null == factory || null == clear)
+            var clear = GetFirstNodeFactoryFromPath(path) as IClearItem;
+            if (null == clear)
             {
                 return null;
             }
@@ -654,7 +643,7 @@ namespace CodeOwls.PowerShell.Provider
         void ClearItem( string path, IPathNode factory )
         {
             var clear = factory as IClearItem;
-            if (null == factory || null == clear)
+            if (null == clear)
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.ClearItem, ClearItemNotSupportedErrorID);
                 return;
@@ -695,9 +684,8 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoInvokeDefaultActionDynamicParameters(string path)
         {
-            var factory = GetFirstNodeFactoryFromPath(path);
-            var invoke = factory as IInvokeItem;
-            if (null == factory || null == invoke)
+            var invoke = GetFirstNodeFactoryFromPath(path) as IInvokeItem;
+            if (null == invoke)
             {
                 return null;
             }
@@ -725,7 +713,7 @@ namespace CodeOwls.PowerShell.Provider
         void InvokeDefaultAction( string path, IPathNode factory )
         {
             var invoke = factory as IInvokeItem;
-            if (null == factory || null == invoke)
+            if (null == invoke)
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.InvokeItem, InvokeItemNotSupportedErrorID);
                 return;
@@ -857,7 +845,7 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoGetChildItemsDynamicParameters(string path)
         {
-            IPathNode pathNode = GetFirstNodeFactoryFromPath(path);
+            var pathNode = GetFirstNodeFactoryFromPath(path);
             if (null == pathNode)
             {
                 return null;
@@ -905,7 +893,7 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoGetChildNamesDynamicParameters(string path)
         {
-            IPathNode pathNode = GetFirstNodeFactoryFromPath(path);
+            var pathNode = GetFirstNodeFactoryFromPath(path);
             if (null == pathNode)
             {
                 return null;
@@ -934,7 +922,7 @@ namespace CodeOwls.PowerShell.Provider
         void RenameItem(string path, string newName, IPathNode factory)
         {
             var rename = factory as IRenameItem;
-            if (null == factory || null == rename)
+            if (null == rename)
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.RenameItem, RenameItemNotsupportedErrorID);
                 return;
@@ -966,9 +954,8 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoRenameItemDynamicParameters(string path)
         {
-            var factory = GetFirstNodeFactoryFromPath(path);
-            var rename = factory as IRenameItem;
-            if (null == factory || null == rename)
+            var rename = GetFirstNodeFactoryFromPath(path) as IRenameItem;
+            if (null == rename)
             {
                 return null;
             }
@@ -985,7 +972,7 @@ namespace CodeOwls.PowerShell.Provider
         {
             bool isParentOfPath;
             var factories = GetNodeFactoryFromPathOrParent(path, out isParentOfPath);
-            if (null == factories)
+            if (null == factories || !factories.Any())
             {
                 return;
             }
@@ -996,7 +983,7 @@ namespace CodeOwls.PowerShell.Provider
         void NewItem( string path, bool isParentPathNodeFactory, IPathNode factory, string itemTypeName, object newItemValue )
         {
             var @new = factory as INewItem;
-            if (null == factory || null == @new)
+            if (null == @new)
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.NewItem, NewItemNotSupportedErrorID);
                 return;
@@ -1045,9 +1032,14 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoNewItemDynamicParameters(string path)
         {
-            var factory = GetNodeFactoryFromPathOrParent(path).FirstOrDefault();
-            var @new = factory as INewItem;
-            if (null == factory || null == @new)
+            var factories = GetNodeFactoryFromPathOrParent(path);
+            if (null == factories || !factories.Any())
+            {
+                return null;
+            }
+
+            var @new = factories.First() as INewItem;
+            if (null == @new)
             {
                 return null;
             }
@@ -1087,6 +1079,14 @@ namespace CodeOwls.PowerShell.Provider
             var factories = GetNodeFactoryFromPath(path);
             if (null == factories)
             {
+                WriteError(
+                    new ErrorRecord(
+                        new ItemNotFoundException(path),
+                        RemoveItemTargetDoesNotExistErrorID,
+                        ErrorCategory.ObjectNotFound,
+                        path
+                        )
+                    );
                 return;
             }
             factories.ToList().ForEach(f => RemoveItem(path, f, recurse));
@@ -1095,7 +1095,7 @@ namespace CodeOwls.PowerShell.Provider
         void RemoveItem( string path, IPathNode factory, bool recurse)
         {
             var remove = factory as IRemoveItem;
-            if (null == factory || null == remove)
+            if (null == remove)
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.RemoveItem, RemoveItemNotSupportedErrorID);
                 return;
@@ -1131,9 +1131,8 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoRemoveItemDynamicParameters(string path)
         {
-            var factory = GetFirstNodeFactoryFromPath(path);
-            var remove = factory as IRemoveItem;
-            if (null == factory || null == remove)
+            var remove = GetFirstNodeFactoryFromPath(path) as IRemoveItem;
+            if (null == remove)
             {
                 return null;
             }
@@ -1217,11 +1216,7 @@ namespace CodeOwls.PowerShell.Provider
                 return false;
             }
             var nodes = factory.GetNodeChildren(CreateContext(path));
-            if (null == nodes)
-            {
-                return false;
-            }
-            return nodes.Any();
+            return !(null == nodes || !nodes.Any());
         }
 
         protected override void CopyItem(string path, string copyPath, bool recurse)
@@ -1235,6 +1230,14 @@ namespace CodeOwls.PowerShell.Provider
             var sourceNodes = GetNodeFactoryFromPath(path);
             if (null == sourceNodes)
             {
+                WriteError(
+                    new ErrorRecord(
+                        new ItemNotFoundException(path),
+                        CopyItemSourceDoesNotExistErrorID,
+                        ErrorCategory.ObjectNotFound,
+                        path
+                        )
+                    );
                 return;
             }
 
@@ -1268,13 +1271,7 @@ namespace CodeOwls.PowerShell.Provider
 
         private ICopyItem GetCopyItem(IPathNode sourcePathNode)
         {
-            var copyItem = sourcePathNode as ICopyItem;
-            if (null == sourcePathNode || null == copyItem)
-            {
-                return null;
-            }
-
-            return copyItem;
+            return sourcePathNode as ICopyItem;
         }
 
         private IPathValue DoCopyItem(string path, string copyPath, bool recurse, ICopyItem copyItem)
@@ -1310,9 +1307,8 @@ namespace CodeOwls.PowerShell.Provider
 
         private object DoCopyItemDynamicParameters(string path)
         {
-            var factory = GetFirstNodeFactoryFromPath(path);
-            var copy = factory as ICopyItem;
-            if (null == factory || null == copy)
+            var copy = GetFirstNodeFactoryFromPath(path) as ICopyItem;
+            if (null == copy)
             {
                 return null;
             }
@@ -1331,6 +1327,14 @@ namespace CodeOwls.PowerShell.Provider
             var factories = GetNodeFactoryFromPath(path);
             if (null == factories)
             {
+                WriteError(
+                    new ErrorRecord(
+                        new ItemNotFoundException(path),
+                        GetContentTargetDoesNotExistErrorID,
+                        ErrorCategory.ObjectNotFound,
+                        path
+                        )
+                    );
                 return null;
             }
 
@@ -1373,22 +1377,95 @@ namespace CodeOwls.PowerShell.Provider
 
         public IContentWriter GetContentWriter(string path)
         {
-            throw new NotImplementedException();
+            Func<IContentWriter> a = () => DoGetContentWriter(path);
+            return ExecuteAndLog(a, "GetContentWriter", path);
+        }
+
+        private IContentWriter DoGetContentWriter(string path)
+        {
+            var factories = GetNodeFactoryFromPath(path);
+            if (null == factories)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new ItemNotFoundException(path),
+                        GetContentTargetDoesNotExistErrorID,
+                        ErrorCategory.ObjectNotFound,
+                        path
+                        )
+                    );
+                return null;
+            }
+
+            return GetContentWriter(path, factories.First(a => a is ISetItemContent));
+        }
+
+        private IContentWriter GetContentWriter(string path, IPathNode pathNode)
+        {
+            var getContentWriter = pathNode as ISetItemContent;
+            if (null == getContentWriter)
+            {
+                return null;
+            }
+
+            return getContentWriter.GetContentWriter(CreateContext(path));
         }
 
         public object GetContentWriterDynamicParameters(string path)
         {
-            throw new NotImplementedException();
+            Func<object> a = () => DoGetContentWriterDynamicParameters(path);
+            return ExecuteAndLog(a, "GetContentWriterDynamicParameters", path);
+        }
+
+        private object DoGetContentWriterDynamicParameters(string path)
+        {
+            var factories = GetFirstNodeFactoryFromPath(path);
+            if (null == factories)
+            {
+                return null;
+            }
+
+            var getContentWriter = factories as ISetItemContent;
+            if (null == getContentWriter)
+            {
+                return null;
+            }
+
+            return getContentWriter.GetContentWriterDynamicParameters(CreateContext(path));
         }
 
         public void ClearContent(string path)
         {
-            throw new NotImplementedException();
+            Action a = () => DoClearContent(path);
+            ExecuteAndLog(a, "ClearContent");
+        }
+
+        private void DoClearContent(string path)
+        {
+            var clear = GetFirstNodeFactoryFromPath(path) as IClearItemContent;
+            if (null == clear)
+            {
+                return;
+            }
+
+            clear.ClearContent(CreateContext(path));
         }
 
         public object ClearContentDynamicParameters(string path)
         {
-            throw new NotImplementedException();
+            Func<object> a = () => DoClearContentDynamicParameters(path);
+            return ExecuteAndLog(a, "ClearContentDynamicParameters", path);
+        }
+
+        private object DoClearContentDynamicParameters(string path)
+        {
+            var clear = GetFirstNodeFactoryFromPath(path) as IClearItemContent;
+            if (null == clear)
+            {
+                return null;
+            }
+
+            return clear.ClearContentDynamicParameters(CreateContext(path));
         }
 
         protected void LogDebug(string format, params object[] args)
@@ -1413,6 +1490,7 @@ namespace CodeOwls.PowerShell.Provider
             catch (Exception e)
             {
                 LogDebug("!! {0}([{1}]) EXCEPTION: {2}", methodName, argsList, e.ToString());
+                throw;
             }
             finally
             {
@@ -1447,21 +1525,25 @@ namespace CodeOwls.PowerShell.Provider
         private const string ItemModePropertyName = "SSItemMode";
         private const string RemoveItemNotSupportedErrorID = "RemoveItem.NotSupported";
         private const string RemoveItemInvokeErrorID = "RemoveItem.Invoke";
+        private const string RemoveItemTargetDoesNotExistErrorID = "RemoveItem.TargetDoesNotExist";
         private const string CopyItemNotSupportedErrorID = "CopyItem.NotSupported";
         private const string CopyItemInvokeErrorID = "CopyItem.Invoke";
         private const string CopyItemDestinationContainerDoesNotExistErrorID = "CopyItem.DestinationContainerDoesNotExist";
+        private const string CopyItemSourceDoesNotExistErrorID = "CopyItem.SourceDoesNotExist";
         private const string ClearItemPropertyNotsupportedErrorID = "ClearItemProperty.NotSupported";
         private const string GetHelpCustomMamlErrorID = "GetHelp.CustomMaml";
         private const string GetItemInvokeErrorID = "GetItem.Invoke";
         private const string SetItemNotSupportedErrorID = "SetItem.NotSupported";
         private const string SetItemInvokeErrorID = "SetItem.Invoke";
+        private const string SetItemTargetDoesNotExistErrorID = "SetItem.TargetDoesNotExist";
         private const string ClearItemNotSupportedErrorID = "ClearItem.NotSupported";
         private const string ClearItemInvokeErrorID = "ClearItem.Invoke";
         private const string InvokeItemNotSupportedErrorID = "InvokeItem.NotSupported";
         private const string InvokeItemInvokeErrorID = "InvokeItem.Invoke";
         private const string MoveItemNotSupportedErrorID = "MoveItem.NotSupported";
         private const string MoveItemInvokeErrorID = "MoveItem.Invoke";
+        private const string GetContentTargetDoesNotExistErrorID = "GetContent.TargetDoesNotExist";
+        private const string SetContentTargetDoesNotExistErrorID = "SetContent.TargetDoesNotExist";
         private const string ShouldContinuePrompt = "Are you sure?";
-                
     }
 }
