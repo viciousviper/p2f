@@ -42,10 +42,13 @@ namespace CodeOwls.PowerShell.Provider.PathNodeProcessors
 
         bool ShouldProcess(string verboseDescription, string verboseWarning, string caption);
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
         bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason);
 
         bool ShouldContinue(string query, string caption);
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "2#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "3#")]
         bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll);
 
         bool TransactionAvailable();

@@ -25,6 +25,7 @@ using System.Runtime.Serialization;
 
 namespace CodeOwls.PowerShell.Paths.Exceptions
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
     [Serializable]
     public class CopyOrMoveItemInternalException : ProviderException
     {
@@ -39,8 +40,8 @@ namespace CodeOwls.PowerShell.Paths.Exceptions
         {
         }
 
-        public CopyOrMoveItemInternalException(string path, string copyPath, Exception e)
-            : base(string.Format("An internal error occurred attempting to copy or move the item at [{0}] to [{1}].", path, copyPath), e)
+        public CopyOrMoveItemInternalException(string path, string copyPath, Exception exception)
+            : base(string.Format("An internal error occurred attempting to copy or move the item at [{0}] to [{1}].", path, copyPath), exception)
         {
         }
 

@@ -20,7 +20,7 @@
 	IN THE SOFTWARE.
 */
 
-using Sytem;
+using System;
 using System.Management.Automation;
 
 namespace CodeOwls.PowerShell.Provider

@@ -25,6 +25,7 @@ using System.Runtime.Serialization;
 
 namespace CodeOwls.PowerShell.Paths.Exceptions
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
     [Serializable]
     public class NodeDoesNotSupportCmdletException : ProviderException
     {

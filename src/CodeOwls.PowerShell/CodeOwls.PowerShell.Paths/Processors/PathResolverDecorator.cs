@@ -20,27 +20,26 @@
 	IN THE SOFTWARE.
 */
 
-using System;
-using System.Collections.Generic;
 using CodeOwls.PowerShell.Provider.PathNodeProcessors;
 using CodeOwls.PowerShell.Provider.PathNodes;
+using System.Collections.Generic;
 
 namespace CodeOwls.PowerShell.Paths.Processors
 {
     public abstract class PathResolverDecorator : IPathResolver
     {
-        private readonly IPathResolver _basePathResolver;
+        private readonly IPathResolver basePathResolver;
 
-        public PathResolverDecorator(IPathResolver basePathResolver)
+        protected PathResolverDecorator(IPathResolver basePathResolver)
         {
-            _basePathResolver = basePathResolver;
+            this.basePathResolver = basePathResolver;
         }
 
         #region Implementation of IPathResolver
 
         public virtual IEnumerable<IPathNode> ResolvePath(IProviderContext providerContext, string path)
         {
-            return _basePathResolver.ResolvePath(providerContext, path);
+            return basePathResolver.ResolvePath(providerContext, path);
         }
 
         #endregion Implementation of IPathResolver

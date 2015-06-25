@@ -34,14 +34,14 @@ namespace CodeOwls.PowerShell.Provider
             return null == items ? "(<null>)" : "(" + string.Join("), (", items.ToArray()) + ")";
         }
 
-        public static string ToArgString(this PSObject o)
+        public static string ToArgString(this PSObject pso)
         {
-            return null == o ? "<null>" : o.BaseObject.ToString();
+            return null == pso ? "<null>" : pso.BaseObject.ToString();
         }
 
-        public static string ToArgString(this object o)
+        public static string ToArgString(this object value)
         {
-            return null == o ? "<null>" : o.ToString();
+            return null == value ? "<null>" : value.ToString();
         }
     }
 }

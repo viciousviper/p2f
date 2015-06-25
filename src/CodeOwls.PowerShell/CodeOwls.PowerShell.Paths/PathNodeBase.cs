@@ -28,12 +28,12 @@ namespace CodeOwls.PowerShell.Provider.PathNodes
 {
     public abstract class PathNodeBase : IPathNode
     {
-        public virtual IEnumerable<IPathNode> Resolve(IProviderContext providerContext, string nodeName)
+        public virtual IEnumerable<IPathNode> Resolve(IProviderContext providerContext, string name)
         {
             var children = GetNodeChildren(providerContext);
             foreach (var child in children)
             {
-                if (null == nodeName || StringComparer.InvariantCultureIgnoreCase.Equals(nodeName, child.Name))
+                if (null == name || StringComparer.InvariantCultureIgnoreCase.Equals(name, child.Name))
                 {
                     yield return child;
                 }

@@ -20,6 +20,7 @@
 	IN THE SOFTWARE.
 */
 
+using System;
 using System.Reflection;
 
 [assembly: AssemblyConfiguration("")]

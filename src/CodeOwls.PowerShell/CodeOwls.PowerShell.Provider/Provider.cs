@@ -41,10 +41,8 @@ using CodeOwls.PowerShell.Provider.PathNodes;
 
 namespace CodeOwls.PowerShell.Provider
 {
-    public abstract class Provider : NavigationCmdletProvider,
-        IPropertyCmdletProvider,
-        ICmdletProviderSupportsHelp,
-        IContentCmdletProvider
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
+    public abstract class Provider : NavigationCmdletProvider, IPropertyCmdletProvider, ICmdletProviderSupportsHelp, IContentCmdletProvider
     {
         internal Drive DefaultDrive
         {
@@ -277,7 +275,7 @@ namespace CodeOwls.PowerShell.Provider
             var idsFromAttributes =
                 from CmdletHelpPathIDAttribute attr in
                     nodeFactoryType.GetCustomAttributes(typeof(CmdletHelpPathIDAttribute), true)
-                select attr.ID;
+                select attr.Id;
 
             List<string> keys = new List<string>(idsFromAttributes);
             keys.AddRange(new[]
@@ -333,7 +331,7 @@ namespace CodeOwls.PowerShell.Provider
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(document.NameTable);
             nsmgr.AddNamespace("cmd", "http://schemas.microsoft.com/maml/dev/command/2004/10");
 
-            string xpath = string.Format("/helpItems/providerHelp/CmdletHelpPaths/CmdletHelpPath[@ID='{0}']/cmd:command[ ./cmd:details[ (cmd:verb='{1}') and (cmd:noun='{2}') ] ]", key, verb, noun);
+            string xpath = string.Format("/helpItems/providerHelp/CmdletHelpPaths/CmdletHelpPath[@Id='{0}']/cmd:command[ ./cmd:details[ (cmd:verb='{1}') and (cmd:noun='{2}') ] ]", key, verb, noun);
 
             XmlNode node = null;
             try
@@ -1327,7 +1325,7 @@ namespace CodeOwls.PowerShell.Provider
             {
                 WriteDebug(string.Format(format, args));
             }
-            catch
+            catch (Exception)
             {
             }
         }

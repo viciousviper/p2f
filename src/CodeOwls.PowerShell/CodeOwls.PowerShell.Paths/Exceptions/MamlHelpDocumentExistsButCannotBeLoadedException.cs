@@ -25,6 +25,7 @@ using System.Runtime.Serialization;
 
 namespace CodeOwls.PowerShell.Paths.Exceptions
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
     [Serializable]
     public class MamlHelpDocumentExistsButCannotBeLoadedException : ProviderException
     {
@@ -39,8 +40,8 @@ namespace CodeOwls.PowerShell.Paths.Exceptions
         {
         }
 
-        public MamlHelpDocumentExistsButCannotBeLoadedException(string filename, Exception e)
-            : base(string.Format("The custom MAML help file '{0}' exists, but cannot be loaded by the XML parser.  Verify the file is valid MAML.", filename), e)
+        public MamlHelpDocumentExistsButCannotBeLoadedException(string fileName, Exception exception)
+            : base(string.Format("The custom MAML help file '{0}' exists, but cannot be loaded by the XML parser.  Verify the file is valid MAML.", fileName), exception)
         {
         }
 

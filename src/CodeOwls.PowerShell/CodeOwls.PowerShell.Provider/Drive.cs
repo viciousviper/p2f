@@ -30,7 +30,7 @@ namespace CodeOwls.PowerShell.Provider
     {
         private static Regex driveNameRegex = new Regex(@"^([^:]+):");
 
-        public Drive(PSDriveInfo driveInfo) : base(driveInfo)
+        protected Drive(PSDriveInfo driveInfo) : base(driveInfo)
         {
         }
 

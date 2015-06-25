@@ -24,14 +24,15 @@ using System;
 
 namespace CodeOwls.PowerShell.Provider.Attributes
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class CmdletHelpPathIDAttribute : Attribute
+    public sealed class CmdletHelpPathIDAttribute : Attribute
     {
+        public string Id { get; }
+
         public CmdletHelpPathIDAttribute(string id)
         {
-            ID = id;
+            Id = id;
         }
-
-        public string ID { get; }
     }
 }

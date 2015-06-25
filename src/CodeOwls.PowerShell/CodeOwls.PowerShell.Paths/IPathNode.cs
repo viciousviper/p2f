@@ -30,6 +30,7 @@ namespace CodeOwls.PowerShell.Provider.PathNodes
     {
         IEnumerable<IPathNode> Resolve(IProviderContext providerContext, string name);
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         IPathValue GetNodeValue();
 
         IEnumerable<IPathNode> GetNodeChildren(IProviderContext providerContext);

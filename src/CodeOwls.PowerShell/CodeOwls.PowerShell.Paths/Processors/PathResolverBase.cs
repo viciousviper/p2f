@@ -35,6 +35,9 @@ namespace CodeOwls.PowerShell.Paths.Processors
 
         public virtual IEnumerable<IPathNode> ResolvePath(IProviderContext providerContext, string path)
         {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+
             Regex re = new Regex(@"^[-_a-z0-9:]+:/?");
             path = path.ToLowerInvariant().Replace('\\', '/');
             path = re.Replace(path, "");

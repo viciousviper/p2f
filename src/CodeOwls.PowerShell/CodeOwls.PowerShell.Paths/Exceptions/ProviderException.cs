@@ -26,7 +26,7 @@ using System.Runtime.Serialization;
 namespace CodeOwls.PowerShell.Paths.Exceptions
 {
     [Serializable]
-    public class ProviderException : ApplicationException
+    public class ProviderException : Exception
     {
         //
         // For guidelines regarding the creation of new exception types, see
