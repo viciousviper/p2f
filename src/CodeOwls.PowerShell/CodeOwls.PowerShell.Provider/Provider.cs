@@ -413,9 +413,10 @@ namespace CodeOwls.PowerShell.Provider
 
         private void MoveItem(string path, IPathNode sourcePathNode, string destination)
         {
+            var move = sourcePathNode as IMoveItem;
             var copy = sourcePathNode as ICopyItem;
             var remove = sourcePathNode as IRemoveItem;
-            if (null == copy || null == remove)
+            if (null == move && (null == copy || null == remove))
             {
                 WriteCmdletNotSupportedAtNodeError(path, ProviderCmdlet.MoveItem, MoveItemNotSupportedErrorID);
                 return;
@@ -428,13 +429,38 @@ namespace CodeOwls.PowerShell.Provider
 
             try
             {
-                DoCopyItem(path, destination, true, copy);
-                DoRemoveItem(path, true, remove);
+                if (null != move)
+                {
+                    DoMoveItem(path, destination, move);
+                }
+                else
+                {
+                    DoCopyItem(path, destination, true, copy);
+                    DoRemoveItem(path, true, remove);
+                }
             }
             catch (Exception e)
             {
                 WriteGeneralCmdletError(e, MoveItemInvokeErrorID, path);
             }
+        }
+
+        private IPathValue DoMoveItem(string path, string movePath, IMoveItem moveItem)
+        {
+            bool targetNodeIsParentNode;
+            var targetNodes = GetNodeFactoryFromPathOrParent(movePath, out targetNodeIsParentNode);
+            var targetNode = targetNodes.FirstOrDefault();
+
+            var sourceName = GetChildName(path);
+            var moveName = targetNodeIsParentNode ? GetChildName(movePath) : null;
+
+            if (null == targetNode)
+            {
+                WriteError(new ErrorRecord(new CopyOrMoveToNonexistentContainerException(movePath), CopyItemDestinationContainerDoesNotExistErrorID, ErrorCategory.WriteError, movePath));
+                return null;
+            }
+
+            return moveItem.MoveItem(CreateContext(path), sourceName, moveName, targetNode.GetNodeValue());
         }
 
         protected override string MakePath(string parent, string child)
